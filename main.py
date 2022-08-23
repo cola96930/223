@@ -51,7 +51,7 @@ def kqzl():
     res = conn.getresponse()
     data = res.read()
     data = json.loads(data)
-    data = "当前时间："+str(data["newslist"][0]["time"])+"        空气质量："+str(data["newslist"][0]["quality"])
+    data = "当前时间："+str(data["newslist"][0]["time"])+"                   空气质量："+str(data["newslist"][0]["quality"])
     return data
   
 def tq():
