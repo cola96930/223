@@ -42,7 +42,27 @@ def get_tbirthday():
     next = next.replace(year=next.year + 1)
   return (next - today).days
 
-
+def kqzl():
+    conn = http.client.HTTPSConnection('api.tianapi.com')  #接口域名
+    params = urllib.parse.urlencode({'key':'a59bb78a1149fb897531644c84f7d262','area':'上海'})
+    headers = {'Content-type':'application/x-www-form-urlencoded'}
+    conn.request('POST','/aqi/index',params,headers)
+    res = conn.getresponse()
+    data = res.read()
+    data = json.loads(data)
+    data = "当前时间："+str(data["newslist"][0]["time"])+"     空气质量："+str(data["newslist"][0]["quality"])
+    return data
+  
+def tq():
+    conn = http.client.HTTPSConnection('api.tianapi.com')  #接口域名
+    params = urllib.parse.urlencode({'key':'a59bb78a1149fb897531644c84f7d262','area':'上海市'})
+    headers = {'Content-type':'application/x-www-form-urlencoded'}
+    conn.request('POST','/game/index',params,headers)
+    res = conn.getresponse()
+    data = res.read()
+    data = json.loads(data)
+    return data["newslist"][0]["description"]
+  
 def get_words():
   words = requests.get("https://api.shadiao.pro/chp")
   if words.status_code != 200:
@@ -57,7 +77,10 @@ client = WeChatClient(app_id, app_secret)
 
 wm = WeChatMessage(client)
 wea, temperature = get_weather()
-data = {"weather":{"value":wea},"temperature":{"value":temperature},"love_days":{"value":get_count()},"birthday_left":{"value":get_birthday()},"tbirthday_left":{"value":get_tbirthday()},"words":{"value":get_words(), "color":get_random_color()}}
+data = {"weather":{"value":wea, "color":get_random_color()},"temperature":{"value":temperature, "color":get_random_color()},"love_days":{"value":get_count()},"kqzl":{"value":kqzl(), "color":get_random_color()},"tq":{"value":tq(), "color":get_random_color()},"birthday_left":{"value":get_birthday(), "color":get_random_color()},"tbirthday_left":{"value":get_tbirthday(), "color":get_random_color()},"words":{"value":get_words(), "color":get_random_color()}}
+res = wm.send_template(user_id, template_id, data)
+print(res)
+
 res = wm.send_template(user_id, template_id, data)
 print(res)
 
